@@ -52,42 +52,100 @@
 
 (require 'cl-lib)
 
-(defvar hemisu-color-defs
-  ;; name                hex       256
-  '((black              "#000000" "#000000")
-    (white              "#FFFFFF" "#ffffff")
-    (almost-white       "#EEEEEE" "#eeeeee")
-    (almost-black       "#111111" "#121212")
-    (middle-dark-grey   "#777777" "#606060")
-    (middle-light-grey  "#999999" "#949494")
-    (light-grey         "#BBBBBB" "#b2b2b2")
-    (dark-grey          "#444444" "#444444")
+(defun create-hemisu-theme (variant theme-name &optional childtheme)
+          ;; name                                     gui       term
+  (let* ((black              (if (display-graphic-p) "#000000" nil))
+         (white              (if (display-graphic-p) "#FFFFFF" "#ffffff"))
+         (almost-white       (if (display-graphic-p) "#EEEEEE" "#eeeeee"))
+         (almost-black       (if (display-graphic-p) "#111111" "#121212"))
+         (middle-dark-grey   (if (display-graphic-p) "#777777" "#606060"))
+         (middle-light-grey  (if (display-graphic-p) "#999999" "#949494"))
+         (light-grey         (if (display-graphic-p) "#BBBBBB" "#b2b2b2"))
+         (dark-grey          (if (display-graphic-p) "#444444" "#444444"))
 
-    (red                "#D65E76" "#870000")
-    (middle-dark-pink   "#FF0055" "#ff005f")
-    (middle-light-pink  "#D65E76" "#d75f5f")
-    (light-pink         "#FFAFAF" "#ffafaf")
+         (dark-pink          (if (display-graphic-p) "#D65E76" "#870000"))
+         (middle-dark-pink   (if (display-graphic-p) "#FF0055" "#ff005f"))
+         (middle-light-pink  (if (display-graphic-p) "#D65E76" "#d75f5f"))
+         (light-pink         (if (display-graphic-p) "#FFAFAF" "#ffafaf"))
 
-    (dark-blue          "#005F87" "#005f87")
-    (middle-dark-blue   "#538192" "#005f87")
-    (middle-light-blue  "#9FD3E6" "#87d7d7")
-    (light-blue         "#CBE4EE" "#d7ffff")
+         (dark-blue          (if (display-graphic-p) "#005F87" "#005f87"))
+         (middle-dark-blue   (if (display-graphic-p) "#538192" "#005f87"))
+         (middle-light-blue  (if (display-graphic-p) "#9FD3E6" "#87d7d7"))
+         (light-blue         (if (display-graphic-p) "#CBE4EE" "#d7ffff"))
 
-    (dark-green         "#5F5F00" "#5f5f00")
-    (middle-dark-green  "#739200" "#5f8700")
-    (middle-light-green "#B1D631" "#afd75f")
-    (light-green        "#BBFFAA" "#afffaf")
+         (dark-green         (if (display-graphic-p) "#5F5F00" "#5f5f00"))
+         (middle-dark-green  (if (display-graphic-p) "#739200" "#5f8700"))
+         (middle-light-green (if (display-graphic-p) "#B1D631" "#afd75f"))
+         (light-green        (if (display-graphic-p) "#BBFFAA" "#afffaf"))
 
-    (dark-tan           "#503D15" "#5f0000")
-    (light-tan          "#ECE1C8" "#ffffd7"))
-  "Idea shamelessly stolen from the official solarized theme.
-  Each column is a different set, one of which will be stolen
-  based on term capabilities.")
+         (dark-tan           (if (display-graphic-p) "#503D15" "#5f0000"))
+         (light-tan          (if (display-graphic-p) "#ECE1C8" "#ffffd7"))
 
+         (bg          (if (eq variant 'light) white             "#000000"))
+         (norm        (if (eq variant 'light) almost-black      almost-white))
+         (comment     (if (eq variant 'light) middle-light-grey middle-dark-grey))
+         (dimmed      (if (eq variant 'light) middle-dark-grey  middle-light-grey))
+         (subtle      (if (eq variant 'light) light-grey        dark-grey))
+         (faint       (if (eq variant 'light) almost-white      almost-black))
+         (accent1     (if (eq variant 'light) middle-dark-blue  middle-light-blue))
+         (accent2     (if (eq variant 'light) middle-dark-green middle-light-green))
+         (accent3     (if (eq variant 'light) middle-dark-pink  light-green))
+         (accent4     (if (eq variant 'light) dark-tan          light-tan))
+         (norm-red    (if (eq variant 'light) middle-dark-pink  middle-light-pink))
+         (norm-green  (if (eq variant 'light) middle-dark-green middle-light-green))
+         (norm-blue   (if (eq variant 'light) middle-dark-blue  middle-light-blue))
+         (faint-red   (if (eq variant 'light) light-pink         dark-pink))
+         (faint-green (if (eq variant 'light) light-green       dark-green))
+         (faint-blue  (if (eq variant 'light) light-blue        dark-blue)))
 
+    (custom-theme-set-faces
+     theme-name
 
-;; Local Variables:
-;; no-byte-compile: t
-;; End:
+     ;; basic colors
+     `(cursor    ((t (:background ,accent3 :foreground ,bg))))
+     `(default   ((t (if (display-graphic-p) (:background ,bg :foreground ,norm)
+                       (:background ,bg :foreground ,norm)))))
+
+     ;; Highlighting faces
+     `(fringe    ((t (:background ,faint))))
+     `(highlight ((t (:background ,subtle))))
+     `(region    ((t (:background ,faint-blue))))
+
+     ;; Font lock faces
+     `(font-lock-string-face        ((t (:foreground ,accent2))))
+     `(font-lock-comment-face       ((t (:foreground ,comment :slant italic))))
+     `(font-lock-constant-face      ((t (:foreground ,accent1))))
+     `(font-lock-function-face      ((t (:foreground ,norm    :weight bold))))
+     `(font-lock-function-name-face ((t (:foreground ,norm))))
+     `(font-lock-variable-name-face ((t (:foreground ,accent2))))
+     `(font-lock-builtin-face       ((t (:foreground ,accent3))))
+     `(font-lock-keyword-face       ((t (:foreground ,accent2 :weight bold))))
+     `(font-lock-type-face          ((t (:foreground ,accent3))))
+
+     ;; parens
+     `(show-paren-match-face    ((t (:background unspecified :underline (:style line
+                                                                                :color ,accent1)))))
+     `(show-paren-mismatch-face ((t (:background unspecified :foreground ,norm-red
+                                                 :underline (:style line :color ,subtle)))))
+
+     ;; smartparens
+     `(sp-show-pair-match-face     ((t (:weight bold :underline t))))
+     `(sp-show-pair-mismatch-face  ((t (:foreground ,norm-red))))
+
+     ;; line numbers, current line, mode-line
+     `(hl-line  ((t (:background ,faint))))
+     `(linum    ((t (:background ,subtle)))))
+
+    ;; set variables
+    (custom-theme-set-variables
+     theme-name
+     `(fce-rule-color ,subtle))
+
+    ;; call chained theme function
+    (when childtheme (funcall childtheme))))
+
+  ;; Local Variables:
+  ;; no-byte-compile: t
+  ;; End:
 (provide 'hemisu-theme)
 ;;; hemisu-theme.el ends here

@@ -52,23 +52,19 @@
 
 (require 'hemisu-theme)
 
-(let ((color1 white)
-      (color2 almost-black)
-      (color3 middleLightGrey)
-      (color4 middleDarkGrey)
-      (color5 lightGrey)
-      (color6 almostWhite)
-      (color7 middleDarkBlue)))
-
-(defvar hemisu-light-colors
-  )
 (deftheme hemisu-light "The light variant of the Hemisu colour theme")
 
-(hemisu-with-color-variables
- )
+(create-hemisu-theme  'light 'hemisu-light)
 ;; Local Variables:
 ;; no-byte-compile: t
 ;; End:
+
+;;;###autoload
+(and load-file-name
+     (boundp 'custom-theme-load-path)
+     (add-to-list 'custom-theme-load-path
+                  (file-name-as-directory
+                   (file-name-directory load-file-name))))
 
 (provide-theme 'hemisu-light)
 ;;; hemisu-dark-light.el ends here
