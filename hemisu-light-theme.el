@@ -52,9 +52,20 @@
 
 (require 'hemisu-theme)
 
-(deftheme hemisu-light "The light variant of the Hemisu colour theme")
-(create-hemisu-theme 'light 'hemisu-light)
+(let ((color1 white)
+      (color2 almost-black)
+      (color3 middleLightGrey)
+      (color4 middleDarkGrey)
+      (color5 lightGrey)
+      (color6 almostWhite)
+      (color7 middleDarkBlue)))
 
+(defvar hemisu-light-colors
+  )
+(deftheme hemisu-light "The light variant of the Hemisu colour theme")
+
+(hemisu-with-color-variables
+ )
 ;; Local Variables:
 ;; no-byte-compile: t
 ;; End:
